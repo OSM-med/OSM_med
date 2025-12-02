@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>ОСМ · Оценка риска рака лёгкого</title>
+  <style>
+    :root {
+      --bg: #f4f4f4;
+      --card-bg: #ffffff;
+      --border: #111111;
+      --text: #111111;
+      --muted: #555555;
+      --accent: #000000;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+
+    .page {
+      max-width: 960px;
+      width: 100%;
+      padding: 24px 16px 40px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 24px 20px 28px;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.15);
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      border-bottom: 1px solid #d0d0d0;
+      padding-bottom: 10px;
+    }
+
+    .brand-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-book {
+      width: 42px;
+      height: 52px;
+      border: 2px solid var(--border);
+      border-radius: 4px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.08em;
+    }
+
+    .logo-book::before {
+      content: "";
+      position: absolute;
+      left: 3px;
+      top: 4px;
+      bottom: 4px;
+      width: 3px;
+      border-right: 1px solid var(--border);
+    }
+
+    .logo-book span {
+      transform: rotate(-7deg);
+    }
+
+    .brand-text-main {
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .brand-text-sub {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .header-right {
+      text-align: right;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .two-column {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 18px;
+    }
+
+    @media (max-width: 800px) {
+      .two-column {
+        grid-template-columns: 1fr;
+      }
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .header-right {
+        text-align: left;
+      }
+    }
+
+    form {
+      margin: 0;
+    }
+
+    fieldset {
+      margin: 0 0 12px;
+      border-radius: 10px;
+      border: 1px solid #c7c7c7;
+      padding: 10px 12px 12px;
+    }
+
+    legend {
+      padding: 0 6px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    label {
+      display: block;
+      margin: 4px 0;
+      font-size: 13px;
+    }
+
+    .inline {
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    input[type="number"] {
+      width: 110px;
+      padding: 3px 5px;
+      border-radius: 4px;
+      border: 1px solid #b0b0b0;
+      font-size: 13px;
+    }
+
+    input[type="checkbox"],
+    input[type="radio"] {
+      margin-right: 4px;
+    }
+
+    .controls {
+      margin-top: 10px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 8px 18px;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #f2f2f2;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    button:hover {
+      background: #e4e4e4;
+    }
+
+    #result-card {
+      border-radius: 12px;
+      border: 1px solid #b8b8b8;
+      padding: 12px 14px 14px;
+      font-size: 13px;
+      background: #fafafa;
+    }
+
+    .risk-label {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 3px;
+    }
+
+    .risk-title {
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .packyears {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .note {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 10px;
+      border-top: 1px dashed #cccccc;
+      padding-top: 6px;
+    }
+
+    .disclaimer {
+      margin-top: 10px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="card">
+      <header class="header">
+        <div class="brand-left">
+          <div class="logo-book">
+            <span>ОСМ</span>
+          </div>
+          <div>
+            <div class="brand-text-main">Очерки современной медицины</div>
+            <div class="brand-text-sub">Скрининг рака лёгкого · учебный калькулятор риска</div>
+          </div>
+        </div>
+        <div class="header-right">
+          <div>АТЛАС-СТАЙЛ</div>
+          <div>ЧЁРНО-БЕЛЫЙ МИНИМАЛИЗМ</div>
+        </div>
+      </header>
+
+      <h1>Оценка риска рака лёгкого</h1>
+      <div class="subtitle">
+        Инструмент для предварительного отнесения пациента к группе риска по раку лёгкого и выбора тактики скрининга (НДКТ).
+      </div>
+
+      <div class="two-column">
+        <form id="riskForm" onsubmit="event.preventDefault(); calculateRisk();">
+          <fieldset>
+            <legend>1 · Общие данные</legend>
+            <label>
+              Возраст:
+              <input type="number" id="age" min="0" max="120"> лет
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <legend>2 · Курение</legend>
+            <label>Статус курения:</label>
+            <label class="inline">
+              <input type="radio" name="smokingStatus" value="never" checked> Никогда не курил(а)
+            </label>
+            <label class="inline">
+              <input type="radio" name="smokingStatus" value="current"> Курю сейчас
+            </label>
+            <label class="inline">
+              <input type="radio" name="smokingStatus" value="former"> Курил(а) раньше
+            </label>
+
+            <label>
+              Сигарет в день (если когда-либо курили):
+              <input type="number" id="cigsPerDay" min="0">
+            </label>
+            <label>
+              Сколько лет вы курили (или курите):
+              <input type="number" id="yearsSmoked" min="0">
+            </label>
+            <label>
+              Если бросили: сколько лет назад?
+              <input type="number" id="yearsSinceQuit" min="0">
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <legend>3 · Окружающая среда</legend>
+            <label>
+              <input type="checkbox" id="passiveSmoke">
+              Постоянное пассивное курение (дома/на работе)
+            </label>
+            <label>
+              <input type="checkbox" id="airPollution">
+              Проживание в зоне сильного загрязнения воздуха / смога
+            </label>
+            <label>
+              <input type="checkbox" id="radon">
+              Известно о повышенном радоне в доме/регионе
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <legend>4 · Болезни лёгких</legend>
+            <label>
+              <input type="checkbox" id="copd">
+              ХОБЛ
+            </label>
+            <label>
+              <input type="checkbox" id="emphysema">
+              Эмфизема лёгких
+            </label>
+            <label>
+              <input type="checkbox" id="fibrosisMild">
+              Лёгочный фиброз / рубцовые изменения (лёгкой/умеренной степени)
+            </label>
+            <label>
+              <input type="checkbox" id="ipf">
+              Идиопатический лёгочный фиброз (IPF)
+            </label>
+            <label>
+              <input type="checkbox" id="asthmaOrMildLung">
+              Астма, лёгкие бронхоэктазы
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <legend>5 · Наследственность и профессия</legend>
+            <label>
+              <input type="checkbox" id="familyHistory">
+              У близких родственников был рак лёгкого
+            </label>
+            <label>
+              <input type="checkbox" id="occupational">
+              Длительная работа (≥5 лет) с асбестом, металлами (никель, кадмий, хром), кварцевой пылью, дизельной сажей
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <legend>6 · Иммунная система</legend>
+            <label>
+              <input type="checkbox" id="mildImmunodef">
+              Лёгкий/умеренный иммунодефицит (длительная иммуносупрессия, ВИЧ со стабильным иммунитетом)
+            </label>
+            <label>
+              <input type="checkbox" id="severeImmunodef">
+              Выраженный иммунодефицит (ВИЧ с низким CD4, посттрансплантационный статус)
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <legend>7 · Метаболические факторы</legend>
+            <label>
+              <input type="checkbox" id="metabolic">
+              Ожирение / метаболический синдром
+            </label>
+            <label>
+              <input type="checkbox" id="diabetes2">
+              Сахарный диабет 2 типа
+            </label>
+          </fieldset>
+
+          <div class="controls">
+            <button type="submit">Рассчитать риск</button>
+            <button type="button" onclick="document.getElementById('riskForm').reset(); document.getElementById('result-card').style.display='none';">
+              Сбросить
+            </button>
+          </div>
+        </form>
+
+        <div id="result-card" style="display:none;">
+          <div class="risk-label">Результат</div>
+          <div class="risk-title" id="riskGroup"></div>
+          <div class="packyears" id="packInfo"></div>
+          <div id="recommendation"></div>
+          <div class="note">
+            Этот калькулятор создан для образовательных целей в рамках проекта «Очерки современной медицины» и не заменяет очную консультацию врача.
+          </div>
+        </div>
+      </div>
+
+      <div class="disclaimer">
+        Материал не является руководством к самолечению и не предназначен для постановки диагноза. Скрининг рака лёгкого проводится по решению врача с учётом национальных и международных рекомендаций.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function getValue(id) {
+      const el = document.getElementById(id);
+      if (!el) return null;
+      if (el.type === "checkbox") {
+        return el.checked;
+      }
+      if (el.type === "number") {
+        return el.value ? parseFloat(el.value) : 0;
+      }
+      return el.value;
+    }
+
+    function getSmokingStatus() {
+      const radios = document.getElementsByName("smokingStatus");
+      for (let r of radios) {
+        if (r.checked) return r.value;
+      }
+      return "never";
+    }
+
+    function calculateRisk() {
+      const age = getValue("age") || 0;
+      const smokingStatus = getSmokingStatus();
+      const cigsPerDay = getValue("cigsPerDay") || 0;
+      const yearsSmoked = getValue("yearsSmoked") || 0;
+      const yearsSinceQuit = getValue("yearsSinceQuit") || 0;
+
+      const packYears = (cigsPerDay / 20) * yearsSmoked;
+
+      const a = {
+        age: age,
+        packYears: packYears,
+        smokingStatus: smokingStatus,
+        yearsSinceQuit: yearsSinceQuit,
+        hasPassiveSmoke: getValue("passiveSmoke"),
+        hasAirPollution: getValue("airPollution"),
+        hasRadon: getValue("radon"),
+        hasAsthmaOrMildLung: getValue("asthmaOrMildLung"),
+        hasMetabolicOrObesity: getValue("metabolic"),
+        hasDiabetes2: getValue("diabetes2"),
+        hasFamilyHistory: getValue("familyHistory"),
+        hasCOPD: getValue("copd"),
+        hasEmphysema: getValue("emphysema"),
+        hasFibrosisMild: getValue("fibrosisMild"),
+        hasIPF: getValue("ipf"),
+        hasAutoimmuneLungFibrosis: false,
+        hasOccupationalExposure: getValue("occupational"),
+        hasMildImmunodef: getValue("mildImmunodef"),
+        hasSevereImmunodef: getValue("severeImmunodef"),
+        hasRiskMutations: false
+      };
+
+      const riskCode = determineRiskGroup(a);
+      showResult(riskCode, a);
+    }
+
+    function determineRiskGroup(a) {
+      if (
+        a.packYears >= 30 ||
+        a.hasIPF ||
+        a.hasSevereImmunodef ||
+        (a.packYears > 0 && a.hasOccupationalExposure) ||
+        a.hasRiskMutations
+      ) {
+        return "very_high";
+      }
+
+      const is50to80 = a.age >= 50 && a.age <= 80;
+      const isCurrentOrRecentSmoker =
+        a.smokingStatus === "current" ||
+        (a.smokingStatus === "former" && a.yearsSinceQuit < 15);
+
+      if (is50to80 && a.packYears >= 20 && isCurrentOrRecentSmoker) {
+        return "high";
+      }
+
+      if (
+        a.hasFamilyHistory ||
+        a.hasCOPD ||
+        a.hasEmphysema ||
+        a.hasFibrosisMild ||
+        a.hasAutoimmuneLungFibrosis ||
+        a.hasOccupationalExposure ||
+        a.hasMildImmunodef
+      ) {
+        return "increased";
+      }
+
+      if (
+        a.hasPassiveSmoke ||
+        a.hasAirPollution ||
+        a.hasRadon ||
+        a.hasAsthmaOrMildLung ||
+        a.hasMetabolicOrObesity ||
+        a.hasDiabetes2
+      ) {
+        return "moderate";
+      }
+
+      return "low";
+    }
+
+    function showResult(code, a) {
+      const card = document.getElementById("result-card");
+      const riskGroupEl = document.getElementById("riskGroup");
+      const recEl = document.getElementById("recommendation");
+      const packEl = document.getElementById("packInfo");
+
+      const pack = a.packYears.toFixed(1);
+      if (a.packYears > 0) {
+        packEl.textContent = "Стаж курения: " + pack + " pack-years";
+      } else {
+        packEl.textContent = "Стаж курения: не рассчитывается (нет данных о курении).";
+      }
+
+      let title = "";
+      let text = "";
+
+      switch (code) {
+        case "low":
+          title = "Группа риска: НИЗКИЙ";
+          text = "По вашим ответам вы относитесь к низкой группе риска по раку лёгкого. Рутинный скрининг (низкодозная КТ) не показан. Важно избегать табачного дыма и обращаться к врачу при появлении симптомов (кашель, одышка, боль в груди, кровохарканье).";
+          break;
+        case "moderate":
+          title = "Группа риска: УМЕРЕННЫЙ";
+          text = "Вы относитесь к умеренной группе риска. Рутинный скрининг КТ не обязателен, но при стойком кашле, одышке, болях в грудной клетке или кровохаркании следует обсудить с врачом необходимость КТ-обследования.";
+          break;
+        case "increased":
+          title = "Группа риска: ПОВЫШЕННЫЙ";
+          text = "Вы относитесь к повышенной группе риска. Рекомендуется обсудить с врачом проведение низкодозной КТ лёгких 1 раз в 1–2 года, обычно начиная с 50 лет, а также наблюдаться у пульмонолога и контролировать функцию дыхания.";
+          break;
+        case "high":
+          title = "Группа риска: ВЫСОКИЙ";
+          text = "Вы относитесь к высокой группе риска. Международные рекомендации советуют проходить низкодозную КТ лёгких 1 раз в год (как правило, в возрасте 50–80 лет при стаже курения ≥20 pack-years). Обсудите программу скрининга с вашим врачом.";
+          break;
+        case "very_high":
+          title = "Группа риска: ОЧЕНЬ ВЫСОКИЙ";
+          text = "Вы относитесь к очень высокой группе риска. Обычно рекомендуется ежегодная низкодозная КТ лёгких (иногда чаще при наличии изменений на КТ, например субсолидных узлов), нередко начиная с 40–45 лет при IPF или выраженных профессиональных воздействиях. Обязательно обсудите индивидуальный план наблюдения с онкологом или пульмонологом.";
+          break;
+      }
+
+      riskGroupEl.textContent = title;
+      recEl.textContent = text;
+      card.style.display = "block";
+    }
+  </script>
+</body>
+</html>
